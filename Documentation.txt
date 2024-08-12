@@ -1,0 +1,56 @@
+Project Overview
+ Project was created using JavaScript with Playwright. The code was written in IntelliJ Community edition.
+
+Versions of Tools/Packages
+ IntelliJ Community edition - 2024.1.4
+ Node.js - v20.16.0
+ npm - 10.8.2
+ Playwright - 1.46.0
+ 
+Project Structure 
+ Project consists of folders added to it by default when installing Playwright, when for the first time opening project with IntelliJ (.idea).
+ playwright-report folder. There html report is present after running the tests.
+ tests folder. There test scripts are present: testUI.spec.js, testAPI.spec.js. Also cleanup.js script - which, after running, deletes the data created from the UI tests.
+  data folder - inside has only txt file in which API key is being written after UI tests.
+  testsScreenshots folder - stores screenshots after running UI tests.
+
+Automated Tests
+ testUI.spec.js: this file contains script for UI testing. It opens webpage, enters credentials in order to login, clicks Submit button. Navigates to API keys section.
+Creates new API key. Confirms that it was created. Then changes the name. Confirms that name was changed. Gets value of newly created API key. Saves it to txt file.
+Logs out from the webpage.
+ testApi.spec.js: this file contains script for API testing. It reads API key from txt file. Then executes 4 tests. 1 positive for current weather by longitude and latitude,
+1 negative for the same endpoint when providing parameters outside of the correct values scope. 1 positive for current weather by city name, 1 negative for the same endpoint by providing misspelled city name.
+ 
+Test Execution
+IMPORTANT: newly created API key can get activated only after some time or it can take even few hours. Do not execute API tests instantly. Otherwise all these tests will fail.
+Preconditions: project is opened in IntelliJ and in terminal you are inside the root directory (playwright-project).
+ 1.Navigate to terminal in IntelliJ.
+ 2.Run UI tests writing: npx playwright test testUI.spec.js
+ 3.After tests are executed, html report can be checked. Write in the terminal: npx playwright show-report
+ 4.Only after some time (30 min or more) run API tests writing: npx playwright test testAPI.spec.js
+ 5.After tests are executed, html report can be checked. Write in the terminal: npx playwright show-report
+
+Test Data Cleanup
+ 1.In IntelliJ terminal need to navigate to inside tests folder (command: cd tests).
+ 2.Run cleanup.js file writing: node cleanup.js.
+This script deletes API key from txt file, screenshots, newly created and changed API keys in the webpage.
+
+Current Issues with Test Scripts
+ -As of now UI test script always creates API key with the same name. Due to this, even if you run UI script again, it will always save first API key which was newly created and its name was changed.
+ -Not all screenshots are good. They can miss some API keys, if a lot of them were created and the table is not fitting in the page without scrolling down. Also after editing API key name, edit pop up is barely visible.
+ -API script doesn't handle very well if we get 401 response, and retrieving API key from file is happening with each test execution.
+
+Ideas for Improvements
+ -In case it would be needed for the testing purposes, separate UI script could be added only for creating account in the webpage. 
+ -Test data like credentials could be added to a file for script to read them from there.
+ -API key should be encrypted (not visible in plain text in txt file) for security purposes.
+ -When UI script is run again, it should create API key with a slightly different name.
+ -API test script could have additional check: when you run script, firstly it checks if we are getting 401 response. If it is 401 - then provide information that API key
+is still not active, please retry after some time. Or script itself when getting error could provide message about API key is still not active, waiting for 10 min. After 10 min the script retries. Then more retries, until any other error is received - then provides the error or until success response is got and then it continues to execute the test cases.
+ -For better screenshots increase wait time in script, take a screenshot of the whole webpage when it is needed. 
+ -For reports either create custom reports or adjust the current reports for better reporting.
+
+
+
+
+
